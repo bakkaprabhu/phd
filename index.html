@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhD Scholar Roadmap</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎓</span>
+        <div>
+          <h1>PhD Scholar Roadmap</h1>
+          <p>Your complete journey from aspiration to doctorate</p>
+        </div>
+      </div>
+      <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
+        <span class="toggle-icon">🌙</span>
+        <span class="toggle-label">Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Intro strip -->
+  <div class="intro-strip">
+    <p>Click on any node to explore that stage of your PhD journey ✦ Hover to preview</p>
+  </div>
+
+  <!-- Roadmap Canvas -->
+  <main class="roadmap-wrapper">
+    <div class="roadmap-canvas" id="roadmapCanvas">
+
+      <!-- SVG connector lines (drawn by JS) -->
+      <svg class="connectors" id="connectorSvg" aria-hidden="true"></svg>
+
+      <!-- NODES — data-id links to roadmapData in script.js -->
+
+      <div class="node node-start" data-id="before" style="--col:3;--row:1;">
+        <div class="node-icon">🌱</div>
+        <div class="node-label">Before PhD</div>
+        <div class="node-tag">Start Here</div>
+      </div>
+
+      <div class="node" data-id="admission" style="--col:3;--row:2;">
+        <div class="node-icon">📋</div>
+        <div class="node-label">Admission Process</div>
+      </div>
+
+      <div class="node" data-id="coursework" style="--col:2;--row:3;">
+        <div class="node-icon">📚</div>
+        <div class="node-label">Coursework</div>
+      </div>
+
+      <div class="node" data-id="research" style="--col:4;--row:3;">
+        <div class="node-icon">🔬</div>
+        <div class="node-label">Research Phase</div>
+      </div>
+
+      <div class="node" data-id="publishing" style="--col:2;--row:4;">
+        <div class="node-icon">📰</div>
+        <div class="node-label">Publishing Papers</div>
+      </div>
+
+      <div class="node" data-id="thesis" style="--col:4;--row:4;">
+        <div class="node-icon">📝</div>
+        <div class="node-label">Thesis Writing</div>
+      </div>
+
+      <div class="node" data-id="defense" style="--col:3;--row:5;">
+        <div class="node-icon">🏛️</div>
+        <div class="node-label">Defense / Viva</div>
+      </div>
+
+      <div class="node node-branch" data-id="mentalhealth" style="--col:1;--row:3;">
+        <div class="node-icon">🧠</div>
+        <div class="node-label">Life & Mental Health</div>
+      </div>
+
+      <div class="node node-end" data-id="career" style="--col:3;--row:6;">
+        <div class="node-icon">🚀</div>
+        <div class="node-label">Career After PhD</div>
+        <div class="node-tag">Goal</div>
+      </div>
+
+    </div><!-- /roadmap-canvas -->
+  </main>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-item"><span class="dot dot-start"></span> Start</span>
+    <span class="legend-item"><span class="dot dot-mid"></span> Stage</span>
+    <span class="legend-item"><span class="dot dot-branch"></span> Parallel</span>
+    <span class="legend-item"><span class="dot dot-end"></span> Goal</span>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose" aria-label="Close modal">✕</button>
+      <div class="modal-header">
+        <span class="modal-icon" id="modalIcon"></span>
+        <h2 class="modal-title" id="modalTitle"></h2>
+      </div>
+      <p class="modal-summary" id="modalSummary"></p>
+      <div class="modal-section" id="modalPointsSection">
+        <h3 class="modal-section-title">Key Points</h3>
+        <ul class="modal-points" id="modalPoints"></ul>
+      </div>
+      <div class="modal-section" id="modalTipsSection">
+        <h3 class="modal-section-title tips-title">💡 Tips & Best Practices</h3>
+        <ul class="modal-tips" id="modalTips"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

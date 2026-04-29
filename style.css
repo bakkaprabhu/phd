@@ -1,0 +1,541 @@
+/* =============================================
+   PhD Scholar Roadmap — style.css
+   Theme: Academic Ivory & Deep Ink (light) /
+          Midnight Navy (dark)
+   ============================================= */
+
+/* ---------- CSS Variables ---------- */
+:root {
+  --bg:          #f5f0e8;
+  --bg-card:     #fffdf7;
+  --bg-overlay:  rgba(20, 15, 10, 0.55);
+  --ink:         #1a1208;
+  --ink-light:   #5a4a30;
+  --accent:      #b85c00;
+  --accent-glow: rgba(184, 92, 0, 0.18);
+  --accent2:     #2d6a4f;
+  --accent2-glow:rgba(45,106,79,0.15);
+  --start-color: #2d6a4f;
+  --end-color:   #7b2d8b;
+  --branch-color:#1a6b8a;
+  --node-bg:     #fffdf7;
+  --node-border: #d4b896;
+  --node-shadow: 0 4px 24px rgba(90,60,10,0.10);
+  --node-hover-shadow: 0 8px 36px rgba(184,92,0,0.18);
+  --line-color:  #c9a96e;
+  --modal-bg:    #fffdf7;
+  --radius:      16px;
+  --radius-sm:   10px;
+  --font-display:'Playfair Display', Georgia, serif;
+  --font-body:   'DM Sans', sans-serif;
+  --transition:  0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg:          #0e1220;
+  --bg-card:     #151c2e;
+  --bg-overlay:  rgba(0, 0, 0, 0.72);
+  --ink:         #e8e0d0;
+  --ink-light:   #9fa8b8;
+  --accent:      #f0a060;
+  --accent-glow: rgba(240,160,96,0.20);
+  --accent2:     #52c49a;
+  --accent2-glow:rgba(82,196,154,0.18);
+  --start-color: #52c49a;
+  --end-color:   #c084e8;
+  --branch-color:#60b8e0;
+  --node-bg:     #1a2238;
+  --node-border: #2e3d5c;
+  --node-shadow: 0 4px 24px rgba(0,0,0,0.40);
+  --node-hover-shadow: 0 8px 36px rgba(240,160,96,0.22);
+  --line-color:  #2e3d5c;
+  --modal-bg:    #1a2238;
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+/* Subtle paper texture via repeating gradient */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(180,140,80,0.04) 29px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--node-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(90,60,10,0.07);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.logo h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.logo p {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  font-weight: 300;
+  margin-top: 2px;
+}
+
+/* Dark toggle */
+.dark-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg);
+  border: 1.5px solid var(--node-border);
+  border-radius: 99px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--ink);
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.dark-toggle:hover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  color: var(--accent);
+}
+
+.toggle-icon { font-size: 1rem; }
+
+/* ---------- Intro Strip ---------- */
+.intro-strip {
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  border-bottom: 1px solid var(--node-border);
+  background: var(--bg);
+  letter-spacing: 0.01em;
+  transition: background var(--transition);
+}
+
+/* ---------- Roadmap Wrapper ---------- */
+.roadmap-wrapper {
+  position: relative;
+  z-index: 1;
+  padding: 40px 20px 60px;
+  min-height: 70vh;
+  overflow: auto;
+}
+
+/* Grid-based canvas — 5 columns × 6 rows (using CSS vars on each node) */
+.roadmap-canvas {
+  position: relative;
+  width: max(900px, 95vw);
+  max-width: 1100px;
+  margin: 0 auto;
+  /* Each cell: ~180px wide, 130px tall */
+  height: 860px;
+}
+
+/* SVG connector layer */
+.connectors {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.connectors line, .connectors path {
+  stroke: var(--line-color);
+  stroke-width: 2.2;
+  fill: none;
+  stroke-dasharray: 6 4;
+  stroke-linecap: round;
+  opacity: 0.7;
+  transition: stroke var(--transition);
+}
+
+/* ---------- Nodes ---------- */
+.node {
+  position: absolute;
+  /* Position via CSS grid-like custom properties */
+  left: calc((var(--col) - 1) * 20% + 10% - 75px);
+  top:  calc((var(--row) - 1) * 130px + 20px);
+  width: 150px;
+  background: var(--node-bg);
+  border: 2px solid var(--node-border);
+  border-radius: var(--radius);
+  padding: 20px 14px 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--node-shadow);
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition),
+    background var(--transition);
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: nodeIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* Staggered entry animation per row */
+.node[style*="--row:1"] { animation-delay: 0.05s; }
+.node[style*="--row:2"] { animation-delay: 0.15s; }
+.node[style*="--row:3"] { animation-delay: 0.25s; }
+.node[style*="--row:4"] { animation-delay: 0.35s; }
+.node[style*="--row:5"] { animation-delay: 0.45s; }
+.node[style*="--row:6"] { animation-delay: 0.55s; }
+
+@keyframes nodeIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.node:hover {
+  transform: translateY(-5px) scale(1.04);
+  box-shadow: var(--node-hover-shadow);
+  border-color: var(--accent);
+  z-index: 10;
+}
+
+.node.active {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--node-bg), var(--accent-glow));
+  box-shadow: var(--node-hover-shadow), 0 0 0 3px var(--accent-glow);
+}
+
+/* Start node */
+.node-start {
+  border-color: var(--start-color);
+  background: linear-gradient(135deg, var(--node-bg) 60%, var(--accent2-glow));
+}
+.node-start:hover { border-color: var(--start-color); box-shadow: 0 8px 36px var(--accent2-glow); }
+
+/* End node */
+.node-end {
+  border-color: var(--end-color);
+  background: linear-gradient(135deg, var(--node-bg) 60%, rgba(123,45,139,0.10));
+}
+[data-theme="dark"] .node-end {
+  background: linear-gradient(135deg, var(--node-bg) 60%, rgba(192,132,232,0.12));
+}
+.node-end:hover { border-color: var(--end-color); box-shadow: 0 8px 36px rgba(123,45,139,0.18); }
+
+/* Branch node (mental health) */
+.node-branch {
+  border-color: var(--branch-color);
+  border-style: dashed;
+  background: linear-gradient(135deg, var(--node-bg) 60%, rgba(26,107,138,0.10));
+}
+[data-theme="dark"] .node-branch {
+  background: linear-gradient(135deg, var(--node-bg) 60%, rgba(96,184,224,0.10));
+}
+.node-branch:hover { border-color: var(--branch-color); }
+
+.node-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.node:hover .node-icon { transform: scale(1.15) rotate(-4deg); }
+
+.node-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.node-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 2px 7px;
+  border: 1px solid var(--accent);
+  border-radius: 99px;
+}
+.node-start .node-tag { color: var(--start-color); border-color: var(--start-color); }
+.node-end  .node-tag { color: var(--end-color);   border-color: var(--end-color);   }
+
+/* ---------- Legend ---------- */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 20px 32px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  color: var(--ink-light);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+.dot-start  { border-color: var(--start-color);  background: transparent; }
+.dot-mid    { border-color: var(--accent);        background: transparent; }
+.dot-branch { border-color: var(--branch-color);  background: transparent; border-style: dashed; }
+.dot-end    { border-color: var(--end-color);     background: transparent; }
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--modal-bg);
+  border: 1.5px solid var(--node-border);
+  border-radius: 24px;
+  padding: 36px 32px 32px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.22);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.32s cubic-bezier(0.34,1.4,0.64,1);
+}
+
+.modal-overlay.open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: var(--bg);
+  border: 1.5px solid var(--node-border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-light);
+  transition: all var(--transition);
+}
+.modal-close:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.modal-icon {
+  font-size: 2.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3.5vw, 1.75rem);
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.15;
+  padding-top: 4px;
+}
+
+.modal-summary {
+  font-size: 0.93rem;
+  line-height: 1.7;
+  color: var(--ink-light);
+  margin-bottom: 22px;
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+}
+
+.modal-section {
+  margin-bottom: 22px;
+}
+
+.modal-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.tips-title { color: #b07d00; }
+[data-theme="dark"] .tips-title { color: #f0c060; }
+
+.modal-points, .modal-tips {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-points li, .modal-tips li {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 9px 13px 9px 38px;
+  border-radius: var(--radius-sm);
+  position: relative;
+}
+
+.modal-points li {
+  background: var(--bg);
+  color: var(--ink);
+}
+.modal-points li::before {
+  content: '◆';
+  position: absolute;
+  left: 13px;
+  color: var(--accent);
+  font-size: 0.55rem;
+  top: 12px;
+}
+
+.modal-tips li {
+  background: rgba(184,92,0,0.06);
+  color: var(--ink);
+  border-left: 2.5px solid #d4a040;
+}
+[data-theme="dark"] .modal-tips li {
+  background: rgba(240,160,96,0.08);
+  border-color: #c07820;
+}
+.modal-tips li::before {
+  content: '✓';
+  position: absolute;
+  left: 13px;
+  color: #b07d00;
+  font-weight: 700;
+  top: 9px;
+  font-size: 0.85rem;
+}
+[data-theme="dark"] .modal-tips li::before { color: #f0c060; }
+
+/* Modal scroll bar */
+.modal::-webkit-scrollbar { width: 5px; }
+.modal::-webkit-scrollbar-track { background: transparent; }
+.modal::-webkit-scrollbar-thumb { background: var(--node-border); border-radius: 99px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .header-inner { padding: 12px 16px; }
+  .logo h1 { font-size: 1rem; }
+  .logo p { display: none; }
+  .toggle-label { display: none; }
+  .dark-toggle { padding: 7px 10px; }
+
+  .roadmap-wrapper {
+    padding: 20px 0 40px;
+    overflow-x: auto;
+  }
+
+  .roadmap-canvas {
+    width: 900px;
+    margin: 0;
+  }
+
+  .modal {
+    padding: 28px 20px 24px;
+    border-radius: 18px;
+  }
+
+  .modal-title { font-size: 1.25rem; }
+}
+
+/* ---------- Scrollbar (global) ---------- */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--node-border); border-radius: 99px; }
